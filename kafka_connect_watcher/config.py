@@ -85,6 +85,12 @@ class Config:
                         ] = SnsChannel(sns_channel_name, sns_channel_definition)
                 else:
                     LOG.warning(f"Channel {channel_name} is not supported.")
+        self.scan_backoff_enabled = self.config.get("scan_backoff_enabled", False)
+        self.scan_backoff_multiplier = self.config.get("scan_backoff_multiplier", 2)
+        self.scan_backoff_max_interval = self.config.get(
+            "scan_backoff_max_interval", 300
+        )
+        self.base_scan_interval = self.scan_intervals  # store the original
 
     def __repr__(self):
         return json.dumps(self.original_config)
@@ -117,12 +123,36 @@ class Config:
 
     def set_scan_intervals(self) -> int:
         intervals_value = set_else_none("watch_interval", self.config, 60)
+
         if isinstance(intervals_value, str):
             interval_delta = get_duration(intervals_value)
             now = dt.now()
-            return max(2, int(((now + interval_delta) - now).total_seconds()))
+            base_interval = max(2, int(((now + interval_delta) - now).total_seconds()))
         else:
-            return max([2, intervals_value])
+            base_interval = max([2, intervals_value])
+
+        # Store both base and current interval for backoff logic
+        self.base_scan_interval = base_interval
+        self.scan_intervals = base_interval
+
+        # Backoff config
+        self.scan_backoff_enabled = self.config.get("x-scan_backoff_enabled", False)
+        self.scan_backoff_multiplier = self.config.get("x-scan_backoff_multiplier", 2)
+        self.scan_backoff_max_interval = self.config.get(
+            "x-scan_backoff_max_interval", 300
+        )
+
+        return base_interval
+
+    def adjust_scan_interval(self, failure: bool):
+        if self.scan_backoff_enabled:
+            if failure:
+                self.scan_intervals = min(
+                    self.scan_intervals * self.scan_backoff_multiplier,
+                    self.scan_backoff_max_interval,
+                )
+            else:
+                self.scan_intervals = self.base_scan_interval
 
 
 class EmfConfig:

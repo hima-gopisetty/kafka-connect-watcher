@@ -1,3 +1,7 @@
+x-scan_backoff_enabled: true
+x-scan_backoff_max_interval: 300
+x-scan_backoff_multiplier: 2
+
 clusters:
   - hostname: localhost
     port: 8083

@@ -71,6 +71,18 @@ class Watcher:
         )
         try:
             while self.keep_running:
+                # Apply backoff logic based on previous cycle
+                failure_detected = self.metrics["connect_clusters_unhealthy"] > 0
+                config.adjust_scan_interval(failure_detected)
+
+                LOG.info(
+                    f"Sleeping for {config.scan_intervals} seconds before next cycle..."
+                )
+                for _second in range(config.scan_intervals):
+                    sleep(1)
+                    if not self.keep_running:
+                        break
+
                 now = dt.now()
                 LOG.info("Clusters processing started")
                 for connect_cluster in clusters:
@@ -90,10 +102,7 @@ class Watcher:
                 )
                 if config.emf_watcher_config:
                     handle_watcher_emf(config, self)
-                for _second in range(1, config.scan_intervals):
-                    sleep(1)
-                    if not self.keep_running:
-                        break
+
                 self.metrics.update(
                     {"connect_clusters_healthy": 0, "connect_clusters_unhealthy": 0}
                 )
