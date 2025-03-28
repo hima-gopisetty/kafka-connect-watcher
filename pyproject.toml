@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kafka-connect-watcher"
-version = "0.5.1"
+version = "0.5.1-hima.1"
 description = "Kafka Connect active watcher"
 authors = ["John \"Preston\" Mille <john@ews-network.net>"]
 readme = "README.rst"
@@ -27,7 +27,7 @@ exclude = ["*.pyc", "*~", "*pycache*"]
 
 
 [tool.poetry.urls]
-"GitHub" = "https://github.com/johnpreston/kafka-connect-watcher"
+"GitHub" = "https://github.com/hima-gopisetty/kafka-connect-watche"
 
 [tool.poetry.scripts]
 kafka_connect_watcher = "kafka_connect_watcher.cli:start_watcher"
