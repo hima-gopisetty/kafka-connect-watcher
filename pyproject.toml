@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kafka-connect-watcher"
-version = "0.5.1-hima.1"
+version = "0.5.1.dev0+hima"
 description = "Kafka Connect active watcher"
 authors = ["John \"Preston\" Mille <john@ews-network.net>"]
 readme = "README.rst"
