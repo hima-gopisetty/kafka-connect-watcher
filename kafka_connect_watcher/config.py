@@ -133,26 +133,39 @@ class Config:
 
         # Store both base and current interval for backoff logic
         self.base_scan_interval = base_interval
+        LOG.info(f"Base scan interval: {base_interval}")
         self.scan_intervals = base_interval
+        LOG.info(f"Scan interval: {self.scan_intervals}")
 
         # Backoff config
         self.scan_backoff_enabled = self.config.get("x-scan_backoff_enabled", False)
+        LOG.info(f"Scan backoff enabled: {self.scan_backoff_enabled}")
         self.scan_backoff_multiplier = self.config.get("x-scan_backoff_multiplier", 2)
+        LOG.info(f"Scan backoff multiplier: {self.scan_backoff_multiplier}")
         self.scan_backoff_max_interval = self.config.get(
             "x-scan_backoff_max_interval", 300
         )
+        LOG.info(f"Scan backoff max interval: {self.scan_backoff_max_interval}")
 
         return base_interval
 
     def adjust_scan_interval(self, failure: bool):
+        LOG.info(f"Adjusting scan interval. Failure detected: {failure}")
         if self.scan_backoff_enabled:
+            LOG.info(f"Scan backoff enabled. Failure detected: {failure}")
             if failure:
                 self.scan_intervals = min(
                     self.scan_intervals * self.scan_backoff_multiplier,
                     self.scan_backoff_max_interval,
                 )
+                LOG.info(f"New scan interval: {self.scan_intervals}")
             else:
                 self.scan_intervals = self.base_scan_interval
+                LOG.info(
+                    f"New scan interval for no scan backoff: {self.scan_intervals}"
+                )
+
+            LOG.info(f"New scan interval: {self.scan_intervals}")
 
 
 class EmfConfig:

@@ -73,6 +73,7 @@ class Watcher:
             while self.keep_running:
                 # Apply backoff logic based on previous cycle
                 failure_detected = self.metrics["connect_clusters_unhealthy"] > 0
+                LOG.info(f"Failure detected in watcher: {failure_detected}")
                 config.adjust_scan_interval(failure_detected)
 
                 LOG.info(
