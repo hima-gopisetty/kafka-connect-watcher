@@ -151,6 +151,7 @@ class Config:
 
     def adjust_scan_interval(self, failure: bool):
         LOG.info(f"Adjusting scan interval. Failure detected: {failure}")
+        LOG.info(f"Checking scan backoff enabled: {self.scan_backoff_enabled}")
         if self.scan_backoff_enabled:
             LOG.info(f"Scan backoff enabled. Failure detected: {failure}")
             if failure:
