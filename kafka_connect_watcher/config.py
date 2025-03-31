@@ -85,10 +85,10 @@ class Config:
                         ] = SnsChannel(sns_channel_name, sns_channel_definition)
                 else:
                     LOG.warning(f"Channel {channel_name} is not supported.")
-        self.scan_backoff_enabled = self.config.get("scan_backoff_enabled", False)
-        self.scan_backoff_multiplier = self.config.get("scan_backoff_multiplier", 2)
+        self.scan_backoff_enabled = self.config.get("x-scan_backoff_enabled", False)
+        self.scan_backoff_multiplier = self.config.get("x-scan_backoff_multiplier", 2)
         self.scan_backoff_max_interval = self.config.get(
-            "scan_backoff_max_interval", 300
+            "x-scan_backoff_max_interval", 300
         )
         self.base_scan_interval = self.scan_intervals  # store the original
 
